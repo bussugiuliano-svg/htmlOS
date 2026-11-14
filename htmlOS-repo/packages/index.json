@@ -1,0 +1,94 @@
+{
+  "packages": [
+    {
+      "id": "it.htmlos.calc",
+      "name": "Calcolatrice",
+      "version": "1.0",
+      "icon": "🧮",
+      "description": "App di esempio: calcolatrice (senza eval).",
+      "category": "app",
+      "tags": [
+        "calcolatrice",
+        "matematica",
+        "utilità"
+      ],
+      "author": "htmlOS",
+      "permissions": [
+        "ui.window",
+        "apps.register"
+      ],
+      "updated": "2026-11-14",
+      "rating": 0,
+      "votes": 0,
+      "file": "calcolatrice.json"
+    },
+    {
+      "id": "it.htmlos.orologio",
+      "name": "Orologio da desktop",
+      "version": "1.0",
+      "icon": "🕒",
+      "description": "Addon di esempio: widget sul desktop, icona nella barra e voce nel menu del desktop.",
+      "category": "addon",
+      "tags": [
+        "widget",
+        "orologio",
+        "desktop"
+      ],
+      "author": "htmlOS",
+      "permissions": [
+        "ui.desktop",
+        "ui.taskbar",
+        "ui.menu",
+        "notify"
+      ],
+      "updated": "2026-11-14",
+      "rating": 0,
+      "votes": 0,
+      "file": "orologio.json"
+    },
+    {
+      "id": "it.htmlos.lognotifiche",
+      "name": "Registro notifiche",
+      "version": "1.0",
+      "icon": "📜",
+      "description": "Update di sistema di esempio: sostituisce notify() del kernel per salvare ogni notifica in /Documenti/notifiche.log e aggiunge una pagina in Impostazioni.",
+      "category": "update",
+      "tags": [
+        "sistema",
+        "log",
+        "notifiche"
+      ],
+      "author": "htmlOS",
+      "permissions": [
+        "system",
+        "settings.page"
+      ],
+      "updated": "2026-11-14",
+      "rating": 0,
+      "votes": 0,
+      "file": "registro-notifiche.json"
+    },
+    {
+      "id": "it.htmlos.tramonto",
+      "name": "Tema Tramonto",
+      "version": "1.0",
+      "icon": "🌇",
+      "description": "Tema UI di esempio: viola e arancio. Si applica solo la prima volta; dopo lo scegli da Impostazioni.",
+      "category": "theme",
+      "tags": [
+        "tema",
+        "colori",
+        "viola"
+      ],
+      "author": "htmlOS",
+      "permissions": [
+        "ui.theme",
+        "settings.write"
+      ],
+      "updated": "2026-11-14",
+      "rating": 0,
+      "votes": 0,
+      "file": "tema-tramonto.json"
+    }
+  ]
+}

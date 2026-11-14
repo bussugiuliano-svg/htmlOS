@@ -1,0 +1,27 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.orologio",
+  "name": "Orologio da desktop",
+  "version": "1.0",
+  "icon": "🕒",
+  "description": "Addon di esempio: widget sul desktop, icona nella barra e voce nel menu del desktop.",
+  "preset": "addon",
+  "permissions": [
+    "ui.desktop",
+    "ui.taskbar",
+    "ui.menu",
+    "notify"
+  ],
+  "config": {
+    "saluto": "Questo è un addon: widget, icona nella barra e voce di menu."
+  },
+  "code": "(function(os,config){const w=os.ui.widget('<div style=\"padding:10px 16px;text-align:center;color:#fff;text-shadow:0 1px 4px #000\"><div class=t style=\"font-size:44px;font-weight:200\"></div><div class=d></div></div>',{right:24,top:16});\n   const u=()=>{const n=new Date();w.querySelector('.t').textContent=n.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});w.querySelector('.d').textContent=n.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})};u();const i=setInterval(u,10000);\n   os.ui.tray({text:'🔔',title:'Saluta',onclick:()=>os.notify('Addon di esempio',config.saluto)});os.ui.contextMenu('desktop',()=>({l:'Addon: saluta',f:()=>os.notify('Ciao!',config.saluto)}));return{stop(){clearInterval(i)}}})(os,config)",
+  "author": "htmlOS",
+  "category": "addon",
+  "tags": [
+    "widget",
+    "orologio",
+    "desktop"
+  ],
+  "updated": "2026-11-14"
+}
