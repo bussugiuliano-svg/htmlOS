@@ -1,0 +1,25 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.lognotifiche",
+  "name": "Registro notifiche",
+  "version": "1.0",
+  "icon": "📜",
+  "description": "Update di sistema di esempio: sostituisce notify() del kernel per salvare ogni notifica in /Documenti/notifiche.log e aggiunge una pagina in Impostazioni.",
+  "preset": "update",
+  "permissions": [
+    "system",
+    "settings.page"
+  ],
+  "config": {
+    "file": "/Documenti/notifiche.log"
+  },
+  "code": "(function(os,config){const k=os.system.kernel;os.system.patch(k,'notify',o=>(t,m)=>{try{const p=config.file;k.fs.write(p,(k.fs.exists(p)?k.fs.read(p):'')+new Date().toLocaleString('it-IT')+'  '+t+(m?': '+m:'')+'\\n')}catch(e){}return o(t,m)});\n   os.settings.page({id:'log',title:'Registro notifiche',icon:'📜',render(pg){pg.insertAdjacentHTML('beforeend','<p>Le notifiche vengono salvate in <code>'+config.file+'</code> da questo aggiornamento di sistema.</p>')}})})(os,config)",
+  "author": "htmlOS",
+  "category": "update",
+  "tags": [
+    "sistema",
+    "log",
+    "notifiche"
+  ],
+  "updated": "2026-11-14"
+}
