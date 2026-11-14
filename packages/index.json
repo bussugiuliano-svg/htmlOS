@@ -89,6 +89,24 @@
       "rating": 0,
       "votes": 0,
       "file": "tema-tramonto.json"
+    },
+    {
+      "htmlos": 1,
+      "id": "it.htmlos.localstorage",
+      "name": "localStorage per file",
+      "version": "1.0",
+      "icon": "🗄️",
+      "description": "Update di sistema: permette ai file .html aperti da Esplora file di usare localStorage, previa autorizzazione file per file. Autorizzazioni e dati persistono (in /Apps/it.htmlos.localstorage) e si gestiscono da Impostazioni › localStorage. Il permesso «system» serve solo per seguire rinomina/spostamento/eliminazione dei file.",
+      "preset": "update",
+      "permissions": [
+        "system",
+        "files.handler",
+        "ui.window",
+        "storage",
+        "fs.read",
+        "settings.page",
+        "notify"
+      ]
     }
   ]
 }
