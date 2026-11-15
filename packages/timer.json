@@ -1,0 +1,29 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.timer",
+  "name": "Timer e Pomodoro",
+  "version": "1.0",
+  "icon": "⏱️",
+  "description": "Timer con scadenza, cronometro con giri e Pomodoro con cicli di lavoro e pause (durate configurabili). Continua a funzionare anche con la finestra chiusa e avvisa con notifica e suono.",
+  "preset": "app",
+  "permissions": [
+    "ui.window",
+    "apps.register",
+    "notify"
+  ],
+  "config": {
+    "focus": 25,
+    "pausa": 5,
+    "lunga": 15
+  },
+  "author": "htmlOS",
+  "category": "app",
+  "tags": [
+    "timer",
+    "cronometro",
+    "pomodoro",
+    "produttività"
+  ],
+  "updated": "2026-11-15",
+  "code": "const el=os.utils.el,cfg=config;\n['focus','pausa','lunga'].forEach((k,i)=>{if(!(cfg[k]>0))cfg[k]=[25,5,15][i]});\nconst S={tm:{set:300,left:300,end:0,run:false},sw:{t:0,base:0,start:0,run:false,laps:[]},po:{ph:'focus',left:cfg.focus*60,end:0,run:false,done:0}};\nconst PH={focus:'🍅 Concentrazione',pausa:'☕ Pausa breve',lunga:'🌴 Pausa lunga'};\nconst fmt=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return(h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(s%60).padStart(2,'0')};\nconst fmt2=s=>fmt(Math.floor(s))+'.'+String(Math.floor(s%1*100)).padStart(2,'0');\nconst beep=()=>{try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.setValueAtTime(.2,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+1);o.start();o.stop(a.currentTime+1)}catch(e){}};\nconst next=auto=>{const P=S.po;if(P.ph==='focus'){P.done++;P.ph=P.done%4?'pausa':'lunga'}else P.ph='focus';P.left=cfg[P.ph]*60;os.notify('🍅 Pomodoro',P.ph==='focus'?'Si torna al lavoro!':'Pausa di '+cfg[P.ph]+' minuti');beep();if(auto)P.end=Date.now()+P.left*1000;else P.run=false};\nconst tick=()=>{const n=Date.now(),T=S.tm,P=S.po,W=S.sw;\n if(T.run){T.left=(T.end-n)/1000;if(T.left<=0){T.run=false;T.left=0;os.notify('⏱ Timer','Tempo scaduto!');beep()}}\n if(P.run){P.left=(P.end-n)/1000;if(P.left<=0)next(true)}\n if(W.run)W.t=W.base+(n-W.start)/1000};\nconst iv=setInterval(tick,250);\nos.apps.register({id:'timer',name:'Timer',icon:'⏱️',color:'#c2410c',single:true,open(){os.ui.window({appId:'timer',title:'Timer e Pomodoro',icon:'⏱️',w:360,h:420,render(b,win){\n b.style.cssText='display:flex;flex-direction:column';\n const tabs=el('div','bar'),body=el('div');body.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:10px;text-align:center';\n const big=el('div');big.style.cssText='font-size:54px;font-weight:200;font-variant-numeric:tabular-nums';\n const sub=el('div');sub.style.color='var(--dim)';\n let tab='tm',upd=()=>{};\n const row=(...c)=>{const r=el('div');r.style.cssText='display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center';r.append(...c);return r};\n const btn=(t,f,p)=>{const x=el('button','b'+(p?' p':''),t);x.onclick=()=>{f();upd()};return x};\n const num=(v,f)=>{const i=el('input','in');i.type='number';i.min=1;i.max=999;i.value=v;i.style.width='64px';i.onchange=()=>{f(Math.max(1,Math.min(999,+i.value||1)))};return i};\n const V={\n  tm(){const T=S.tm,inp=num(T.set/60,m=>{T.set=m*60;if(!T.run)T.left=T.set;upd()});\n   body.append(big,row(el('span','','Minuti'),inp),row(...[1,5,10,25,45].map(m=>btn(m+'′',()=>{T.set=m*60;inp.value=m;if(!T.run)T.left=T.set}))),\n    row(btn('▶ Avvia',()=>{if(T.run)return;if(T.left<=0)T.left=T.set;T.end=Date.now()+T.left*1000;T.run=true},1),btn('⏸ Pausa',()=>{T.run=false}),btn('↺ Azzera',()=>{T.run=false;T.left=T.set})));\n   upd=()=>{big.textContent=fmt(T.left)}},\n  sw(){const W=S.sw,L=el('div');L.style.cssText='max-height:130px;overflow:auto;width:100%;font-variant-numeric:tabular-nums;font-size:13px';\n   body.append(big,row(btn('▶ Avvia',()=>{if(W.run)return;W.start=Date.now();W.run=true},1),btn('⏸ Stop',()=>{if(W.run){W.t=W.base+(Date.now()-W.start)/1000;W.base=W.t;W.run=false}}),btn('⚑ Giro',()=>{if(W.run)W.laps.unshift(W.t)}),btn('↺ Azzera',()=>{Object.assign(W,{t:0,base:0,run:false,laps:[]})})),L);\n   upd=()=>{big.textContent=fmt2(W.t);L.innerHTML=W.laps.map((t,i)=>'<div>Giro '+(W.laps.length-i)+' — '+fmt2(t)+'</div>').join('')}},\n  po(){const P=S.po,set=(k,m)=>{cfg[k]=m;os.saveConfig();if(!P.run&&P.ph===k)P.left=m*60;upd()};\n   body.append(sub,big,row(btn('▶ Avvia',()=>{if(P.run)return;P.end=Date.now()+P.left*1000;P.run=true},1),btn('⏸ Pausa',()=>{P.run=false}),btn('⏭ Salta',()=>next(P.run)),btn('↺ Azzera',()=>{P.run=false;P.ph='focus';P.done=0;P.left=cfg.focus*60})),\n    row(el('small','','Lavoro'),num(cfg.focus,m=>set('focus',m)),el('small','','Pausa'),num(cfg.pausa,m=>set('pausa',m)),el('small','','Lunga'),num(cfg.lunga,m=>set('lunga',m))));\n   upd=()=>{big.textContent=fmt(P.left);sub.textContent=PH[P.ph]+' · cicli completati: '+P.done}}};\n const draw=()=>{body.innerHTML='';[...tabs.children].forEach(x=>x.classList.toggle('p',x.dataset.t===tab));V[tab]();upd()};\n [['tm','⏱ Timer'],['sw','⏲ Cronometro'],['po','🍅 Pomodoro']].forEach(([k,l])=>{const x=el('button','b',l);x.dataset.t=k;x.onclick=()=>{tab=k;draw()};tabs.append(x)});\n b.append(tabs,body);draw();const ui=setInterval(()=>upd(),250);win.onclose.push(()=>clearInterval(ui))}})}});\nreturn{stop(){clearInterval(iv)}};\n"
+}

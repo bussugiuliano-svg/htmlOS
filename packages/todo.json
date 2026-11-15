@@ -1,0 +1,27 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.todo",
+  "name": "Attività",
+  "version": "1.0",
+  "icon": "✅",
+  "description": "Lista di cose da fare con priorità, scadenze con promemoria in notifica, filtri e ricerca. I dati restano salvati nella cartella del pacchetto; icona nella barra per aprirla al volo.",
+  "preset": "app",
+  "permissions": [
+    "ui.window",
+    "apps.register",
+    "storage",
+    "notify",
+    "ui.taskbar"
+  ],
+  "config": {},
+  "author": "htmlOS",
+  "category": "app",
+  "tags": [
+    "attività",
+    "todo",
+    "promemoria",
+    "produttività"
+  ],
+  "updated": "2026-11-15",
+  "code": "const el=os.utils.el,esc=os.utils.esc;\nlet DB=[];try{const j=JSON.parse(os.fs.read('dati.json'));if(Array.isArray(j))DB=j}catch(e){}\nconst save=()=>{try{os.fs.write('dati.json',JSON.stringify(DB))}catch(e){os.log(e.message)}};\nconst due=t=>t.d?new Date(t.d).getTime():0,PRI=['Bassa','Normale','Alta'],views=new Set(),upd=()=>views.forEach(f=>f());\nconst chk=()=>{let ch=0;DB.forEach(t=>{if(!t.x&&t.d&&!t.n&&due(t)<=Date.now()){t.n=1;ch=1;os.notify('⏰ Attività in scadenza',t.t)}});if(ch){save();upd()}};\nconst iv=setInterval(chk,20000),t0=setTimeout(chk,1500);\nlet W=null;\nconst openWin=()=>{if(W){W.focus();return}W=os.ui.window({appId:'todo',title:'Attività',icon:'✅',w:520,h:560,render(b,win){\n b.style.cssText='display:flex;flex-direction:column';\n const tb=el('div','bar'),fb=el('div','bar'),list=el('div');list.style.cssText='flex:1;overflow:auto;padding:6px 10px';\n const txt=el('input','in');txt.placeholder='Nuova attività…';txt.style.cssText='flex:1;min-width:140px';\n const dt=el('input','in');dt.type='datetime-local';dt.title='Scadenza (facoltativa)';\n const pr=el('select','in');PRI.forEach((p,i)=>{const o=el('option','',p);o.value=i;pr.append(o)});pr.value=1;\n const add=el('button','b p','Aggiungi');\n const flt=el('select','in');[['open','Aperte'],['all','Tutte'],['late','Scadute'],['done','Completate']].forEach(([k,l])=>{const o=el('option','',l);o.value=k;flt.append(o)});\n const q=el('input','in');q.placeholder='Cerca…';q.style.flex='1';const cnt=el('small'),clr=el('button','b','Elimina completate');\n const go=()=>{const v=txt.value.trim();if(!v)return;DB.push({id:Date.now()+Math.random(),t:v,x:0,d:dt.value,p:+pr.value,n:0});txt.value='';dt.value='';save();upd();txt.focus()};\n add.onclick=go;txt.onkeydown=e=>{if(e.key==='Enter')go()};\n clr.onclick=()=>{DB=DB.filter(t=>!t.x);save();upd()};\n const draw=()=>{const now=Date.now(),s=q.value.toLowerCase();\n  const L=DB.filter(t=>(!s||t.t.toLowerCase().includes(s))&&({open:!t.x,all:true,late:!t.x&&t.d&&due(t)<now,done:t.x}[flt.value])).sort((a,c)=>(a.x-c.x)||(c.p-a.p)||((due(a)||9e15)-(due(c)||9e15)));\n  list.innerHTML='';\n  L.forEach(t=>{const late=!t.x&&t.d&&due(t)<now,r=el('div','row');r.style.gap='8px';\n   const c=el('input');c.type='checkbox';c.checked=!!t.x;c.onchange=()=>{t.x=c.checked?1:0;save();upd()};\n   const m=el('span');m.style.cssText='flex:1;cursor:pointer;'+(t.x?'text-decoration:line-through;opacity:.55':'');m.innerHTML=(t.p===2?'🔴 ':t.p===0?'🔹 ':'')+esc(t.t)+(t.d?' <span class=\"chip'+(late?' w':'')+'\">'+new Date(t.d).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span>':'');\n   m.title='Clic per modificare';m.onclick=async()=>{const v=await os.ui.prompt('Modifica attività',t.t);if(v&&v.trim()){t.t=v.trim();save();upd()}};\n   const x=el('button','b','✕');x.title='Elimina';x.onclick=()=>{DB.splice(DB.indexOf(t),1);save();upd()};\n   r.append(c,m,x);list.append(r)});\n  if(!L.length)list.append(el('p','','<i>Nessuna attività qui.</i>'));\n  cnt.textContent=DB.filter(t=>!t.x).length+' da fare';};\n tb.append(txt,dt,pr,add);fb.append(flt,q,cnt,clr);b.append(tb,fb,list);views.add(draw);draw();\n win.onclose.push(()=>{views.delete(draw);W=null})}})};\nos.apps.register({id:'todo',name:'Attività',icon:'✅',color:'#0f766e',single:true,open:openWin});\nos.ui.tray({text:'✅',title:'Attività',onclick:openWin});\nreturn{stop(){clearInterval(iv);clearTimeout(t0)}};\n"
+}

@@ -1,0 +1,25 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.cerca",
+  "name": "Cerca nei file",
+  "version": "1.0",
+  "icon": "🔎",
+  "description": "Cerca per nome e contenuto in tutto il file system di htmlOS, con filtri per estensione e cartella, maiuscole, espressioni regolari ed evidenziazione. Richiede la lettura di tutti i file.",
+  "preset": "app",
+  "permissions": [
+    "ui.window",
+    "apps.register",
+    "fs.read"
+  ],
+  "config": {},
+  "author": "htmlOS",
+  "category": "app",
+  "tags": [
+    "ricerca",
+    "file",
+    "testo",
+    "utilità"
+  ],
+  "updated": "2026-11-15",
+  "code": "const el=os.utils.el,esc=os.utils.esc;\nconst search=async(o,hit,ctl)=>{let re;\n try{re=new RegExp(o.rx?o.q:o.q.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&'),o.cs?'g':'gi')}catch(e){throw Error('Espressione regolare non valida')}\n const ex=o.ext.split(/[ ,]+/).filter(Boolean).map(x=>x.replace(/^\\./,'').toLowerCase()),qu=[o.dir];let n=0,tk=0,seen=0;\n while(qu.length&&!ctl.stop){const d=qu.shift();let L;try{L=os.fs.list(d)}catch(e){continue}\n  for(const f of L){if(f.d){if(o.apps||f.path!=='/Apps')qu.push(f.path);continue}\n   if(ex.length&&!ex.includes((f.name.split('.').pop()||'').toLowerCase()))continue;seen++;let h=null;\n   if(o.mode!=='c'){re.lastIndex=0;if(re.test(f.name))h={}}\n   if(!h&&o.mode!=='n'&&f.size<2e6){let t='';try{t=os.fs.read(f.path)}catch(e){}\n    if(t&&!t.startsWith('data:')){re.lastIndex=0;const m=re.exec(t);if(m){const a=Math.max(0,m.index-30);h={pre:t.slice(a,m.index),m:m[0],post:t.slice(m.index+m[0].length,m.index+m[0].length+60)}}}}\n   if(h){hit(f,h);if(++n>=500)return{n,seen,cut:1}}\n   if(++tk%150===0)await new Promise(r=>setTimeout(r))}}\n return{n,seen,cut:0}};\nos.apps.register({id:'cerca',name:'Cerca nei file',icon:'🔎',color:'#6d28d9',single:true,open(){os.ui.window({appId:'cerca',title:'Cerca nei file',icon:'🔎',w:640,h:540,render(b,win){\n b.style.cssText='display:flex;flex-direction:column';const ctl={stop:false};win.onclose.push(()=>{ctl.stop=true});\n const bar=el('div','bar'),bar2=el('div','bar'),res=el('div'),st=el('div');res.style.cssText='flex:1;overflow:auto;padding:4px 10px';st.style.cssText='padding:4px 10px;color:var(--dim);font-size:12px;flex:none';\n const q=el('input','in');q.placeholder='Testo da cercare…';q.style.cssText='flex:1;min-width:160px';\n const mode=el('select','in');[['b','Nome e contenuto'],['n','Solo nome'],['c','Solo contenuto']].forEach(([k,l])=>{const o=el('option','',l);o.value=k;mode.append(o)});\n const go=el('button','b p','Cerca');\n const ext=el('input','in');ext.placeholder='Estensioni (txt, md)';ext.style.width='150px';const dir=el('input','in');dir.value='/';dir.style.width='130px';dir.title='Cartella di partenza';\n const opt=(t)=>{const l=el('label','','<input type=checkbox> '+t);l.style.cssText='display:flex;gap:4px;align-items:center';return l};\n const cs=opt('Maiuscole'),rx=opt('Regex'),ap=opt('Includi /Apps');\n bar.append(q,mode,go);bar2.append(ext,dir,cs,rx,ap);b.append(bar,bar2,res,st);\n let busy=false;\n const run=async()=>{if(busy){ctl.stop=true;return}const v=q.value;if(!v){st.textContent='Scrivi qualcosa da cercare.';return}\n  busy=true;ctl.stop=false;go.textContent='Annulla';res.innerHTML='';st.textContent='Ricerca in corso…';\n  const o={q:v,mode:mode.value,ext:ext.value,dir:dir.value||'/',cs:cs.firstChild.checked,rx:rx.firstChild.checked,apps:ap.firstChild.checked};\n  try{const r=await search(o,(f,h)=>{const d=el('div','row');d.style.cssText='cursor:pointer;flex-direction:column;align-items:flex-start;gap:2px';\n    d.innerHTML='<div>📄 <b>'+esc(f.name)+'</b> <small style=\"color:var(--dim)\">'+esc(f.path)+'</small></div>'+(h.m!=null?'<div style=\"font:12px monospace;color:var(--dim);word-break:break-all\">…'+esc(h.pre)+'<mark>'+esc(h.m)+'</mark>'+esc(h.post)+'…</div>':'');\n    d.onclick=()=>os.files.open(f.path);res.append(d)},ctl);\n   st.textContent=(ctl.stop?'Interrotta · ':'')+r.n+' risultati in '+r.seen+' file controllati'+(r.cut?' (limite di 500 raggiunto)':'')}\n  catch(e){st.textContent=e.message}\n  busy=false;go.textContent='Cerca'};\n go.onclick=run;q.onkeydown=e=>{if(e.key==='Enter')run()};q.focus()}})}});\n"
+}

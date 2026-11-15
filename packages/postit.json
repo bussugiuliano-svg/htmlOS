@@ -1,0 +1,25 @@
+{
+  "htmlos": 1,
+  "id": "it.htmlos.postit",
+  "name": "Post-it sul desktop",
+  "version": "1.0",
+  "icon": "📝",
+  "description": "Note adesive trascinabili sul desktop: aggiungile dal menu del tasto destro, cambia colore, i testi restano salvati.",
+  "preset": "addon",
+  "permissions": [
+    "ui.desktop",
+    "ui.menu",
+    "storage"
+  ],
+  "config": {},
+  "author": "htmlOS",
+  "category": "addon",
+  "tags": [
+    "note",
+    "desktop",
+    "widget",
+    "post-it"
+  ],
+  "updated": "2026-11-15",
+  "code": "const el=os.utils.el;\nlet DB=[];try{const j=JSON.parse(os.fs.read('notes.json'));if(Array.isArray(j))DB=j}catch(e){}\nconst COL=['#fde68a','#bbf7d0','#bfdbfe','#fbcfe8'];\nconst save=()=>{try{os.fs.write('notes.json',JSON.stringify(DB))}catch(e){os.log(e.message)}};\nconst add=n=>{\n const d=os.ui.widget('<div class=ps style=\"width:210px;color:#222;box-shadow:0 4px 14px #0007;display:flex;flex-direction:column\"><div class=h style=\"height:20px;cursor:move;display:flex;justify-content:flex-end;gap:8px;padding:0 6px;background:#0002;font-size:12px;line-height:20px;user-select:none\"><span class=c title=\"Cambia colore\" style=\"cursor:pointer\">🎨</span><span class=x title=\"Elimina\" style=\"cursor:pointer\">✕</span></div><textarea placeholder=\"Scrivi qui…\" style=\"height:150px;border:0;background:transparent;resize:none;padding:8px;font:13px/1.35 inherit;outline:0;color:#222\"></textarea></div>',{left:n.x,top:n.y});\n const box=d.firstChild,ta=d.querySelector('textarea'),h=d.querySelector('.h');\n box.style.background=n.c;ta.value=n.t||'';let tm=0;\n ta.oninput=()=>{n.t=ta.value;clearTimeout(tm);tm=setTimeout(save,400)};\n d.querySelector('.c').onclick=()=>{n.c=COL[(COL.indexOf(n.c)+1)%COL.length];box.style.background=n.c;save()};\n d.querySelector('.x').onclick=()=>{d.remove();DB.splice(DB.indexOf(n),1);save()};\n h.onpointerdown=e=>{e.preventDefault();const ox=e.clientX-n.x,oy=e.clientY-n.y;\n  const mv=ev=>{n.x=Math.max(0,Math.min(innerWidth-60,ev.clientX-ox));n.y=Math.max(0,Math.min(innerHeight-100,ev.clientY-oy));d.style.left=n.x+'px';d.style.top=n.y+'px';d.style.right='auto';d.style.bottom='auto'};\n  const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);save()};\n  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)};\n return d};\nDB.forEach(add);\nos.ui.contextMenu('desktop',()=>({l:'📝 Nuovo post-it',f:()=>{const n={x:90+DB.length%8*34,y:70+DB.length%8*34,c:COL[DB.length%COL.length],t:''};DB.push(n);add(n);save()}}));\n"
+}
