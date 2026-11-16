@@ -289,5 +289,32 @@
       "votes": 0,
       "file": "todo.json"
     }
+    {
+      "id": "it.htmlos.minigiochi",
+      "name": "Mini giochi",
+      "version": "1.0",
+      "icon": "🎮",
+      "description": "Cinque mini giochi in un’unica app: Snake, 2048, Memory, Campo minato e Tris contro il computer (anche imbattibile). Funzionano con tastiera, mouse e touch e salvano i record nella cartella del pacchetto.",
+      "category": "app",
+      "tags": [
+        "giochi",
+        "snake",
+        "2048",
+        "memory",
+        "campo minato",
+        "tris",
+        "svago"
+      ],
+      "author": "htmlOS",
+      "permissions": [
+        "ui.window",
+        "apps.register",
+        "storage"
+      ],
+      "updated": "2026-11-16",
+      "rating": 0,
+      "votes": 0,
+      "file": "minigiochi.json"
+    },
   ]
 }
