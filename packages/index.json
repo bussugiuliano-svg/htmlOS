@@ -357,7 +357,7 @@
       "name": "Tema Windows 11",
       "version": "1.1",
       "icon": "🪟",
-      "description": "Porta htmlOS vicino a Windows 11: taskbar centrata con ricerca e app fissate, Start con Consigliati, calendario dall'orologio, icone Fluent di Microsoft caricate da internet (con ripiego sulle emoji), finestre e controlli Fluent, varianti scuro e chiaro, pagina «Barra e icone» nelle Impostazioni. (ATTENZIONE, questà è una versione in beta, e non tutti i bug sono stati sistemati, nel caso di bug disabilitare il pacchetto per ripristinare la funzionalità del sistema, se impossibile farlo aggiungere '#safe' all'indirizzo del browser",
+      "description": "Porta htmlOS vicino a Windows 11: taskbar centrata con ricerca e app fissate, Start con Consigliati, calendario dall'orologio, icone Fluent di Microsoft caricate da internet (con ripiego sulle emoji), finestre e controlli Fluent, varianti scuro e chiaro, pagina «Barra e icone» nelle Impostazioni. (ATTENZIONE, questà è una versione in beta, e non tutti i bug sono stati sistemati, nel caso di bug disabilitare il pacchetto per ripristinare la funzionalità del sistema, se impossibile farlo aggiungere '#safe' all'indirizzo del browser)",
       "category": "theme",
       "tags": [
         "tema",
