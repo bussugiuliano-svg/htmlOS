@@ -1,0 +1,36 @@
+{
+  "updates": [
+    {
+      "id": "it.htmlos.terminale",
+      "name": "Terminale",
+      "version": "1.0",
+      "icon": "⌨️",
+      "description": "Terminale completo con shell hsh (compatibile con bash: pipe, variabili, array, funzioni, cicli, heredoc, jobs, trap…), oltre 150 comandi (ls, grep, sed, awk, jq, find, sort, tar-less file tools, curl…), cronologia, completamento con Tab, Ctrl+R, pager e script .sh eseguibili con un doppio clic.",
+      "category": "update",
+      "tags": [
+        "terminale",
+        "shell",
+        "cli",
+        "strumenti"
+      ],
+      "permissions": [
+        "storage",
+        "notify",
+        "ui.window",
+        "settings.read",
+        "apps.register",
+        "apps.launch",
+        "fs.read",
+        "fs.write",
+        "ui.css",
+        "ui.menu",
+        "files.handler",
+        "settings.write",
+        "net"
+      ],
+      "requires": [],
+      "updated": "2026-11-25",
+      "file": "terminale.json"
+    }
+  ]
+}
